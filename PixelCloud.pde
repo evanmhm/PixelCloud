@@ -17,9 +17,9 @@ float avgSaturation = 0;
 void setup() {
   size(1000, 800, P3D);
   perspective(PI/50.0, (float)width/height, 1, 100000);
+  img = loadImage(imgPath);
   cam = new PeasyCam(this, img.width + 2000);
   
-  img = loadImage(imgPath);
   dimension = img.width * img.height;
   img.loadPixels();
   
