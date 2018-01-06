@@ -1,10 +1,10 @@
-import peasy.*; 
+import peasy.*;
 import gifAnimation.*;
 
 // Options
 float strokeWeight = 1;
 float depth = 255;
-String imgPath = "fan.gif";
+String imgPath = "sunset.png";
 int gifFramerate = 1;
 
 // Internal variables
@@ -66,9 +66,13 @@ void draw() {
     img = getFrame();
   }
 
+  // Auto camera movement
+  //rotateX(sin((PI/200)*frameCount)/20);
+  //rotateY((PI/4000)*frameCount);
+
   // FPS text
   fill(255);
-  text("fps: " + int(frameRate + .5), 0, -img.height/2 - 10, 0); 
+  text("fps: " + int(frameRate + .5), 0, -img.height/2 - 10, 0);
 
   // Rebuild image as pointcloud
   int x = img.width/2;
@@ -82,10 +86,6 @@ void draw() {
     stroke(img.pixels[i]);
     point(x, y, (brightness(img.pixels[i])/256) * depth);
   }
-
-  // Auto camera movement
-  rotateX(sin((PI/200)*frameCount)/20);
-  rotateY((PI/4000)*frameCount);
 }
 
 PImage getFrame() {
