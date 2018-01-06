@@ -4,8 +4,9 @@ import gifAnimation.*;
 // Options
 float strokeWeight = 1;
 float depth = 255;
-String imgPath = "sunset.png";
+String imgPath = "waveSorted.png";
 int gifFramerate = 1;
+int pixelSkip = 1; // 1: normal, 2: half pixels, 3: 1/3 pixels...
 
 // Internal variables
 PFont f;
@@ -26,13 +27,14 @@ void setup() {
   if (!split(imgPath, ".")[1].equals("gif")) {
     print ("not gif");
     img = loadImage(imgPath);
+    get( 0, 0, img.width - (img.width % 2), img.height - (img.height % 2));
   } else {
     print("gif");
     gif = Gif.getPImages(this, imgPath);
     img = gif[0];
     useGif = true;
   }
-
+  print(img.width);
   cam = new PeasyCam(this, img.width + 2000);
 
   dimension = img.width * img.height;
@@ -60,6 +62,7 @@ void setup() {
   textAlign(CENTER);
 }
 
+
 void draw() {
   background(avgHue, avgSaturation, avgBrightness);
   if (useGif) {
@@ -74,17 +77,52 @@ void draw() {
   fill(255);
   text("fps: " + int(frameRate + .5), 0, -img.height/2 - 10, 0);
 
+  //println(pixelSkip);
   // Rebuild image as pointcloud
-  int x = img.width/2;
-  int y = -img.height/2;
-  for (int i = 0; i < dimension; i++) {
+  int x = -(img.width / pixelSkip)/2;
+  int y = -(img.height / pixelSkip)/2;
+  int lineCount = 0;
+  for (int i = 0; i < dimension; i += pixelSkip) {
+    lineCount += pixelSkip;
     x += 1;
-    if (i % img.width == 0) {
+
+    if (lineCount >= img.width) {
+      lineCount = 0;
+      if (pixelSkip > 1) { // if skipping pixels
+        i += (img.width * (pixelSkip - 1)) - (i % img.width); // skip vertical lines in the pixel list
+        if (i >= dimension) {
+          break;
+        }
+        y += 1;
+        x = -(img.width / pixelSkip)/2;
+        stroke(img.pixels[i]);
+        point(x, y, (brightness(img.pixels[i])/256) * depth - depth/2);
+        continue;
+      } else {
+        
+      }
+
+      stroke(img.pixels[i]);
+      point(x, y, (brightness(img.pixels[i])/256) * depth - depth/2);
+      
       y += 1;
-      x -= img.width;
+      x = -(img.width / pixelSkip)/2;
+    } else {
+      stroke(img.pixels[i]);
+      point(x, y, (brightness(img.pixels[i])/256) * depth - depth/2);
     }
-    stroke(img.pixels[i]);
-    point(x, y, (brightness(img.pixels[i])/256) * depth);
+  }
+}
+
+void keyPressed() {
+  if (key == '1') {
+    pixelSkip = 1;
+  }
+  if (key == '2') {
+    pixelSkip = 2;
+  }
+  if (key == '3') {
+    pixelSkip = 3;
   }
 }
 
