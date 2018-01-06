@@ -4,7 +4,7 @@ import gifAnimation.*;
 // Options
 float strokeWeight = 1;
 float depth = 255;
-String imgPath = "waveSorted.png";
+String imgPath = "sunset.png";
 int gifFramerate = 1;
 int pixelSkip = 1; // 1: normal, 2: half pixels, 3: 1/3 pixels...
 
